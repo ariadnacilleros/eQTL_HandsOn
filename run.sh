@@ -440,13 +440,13 @@ rs112466745
 #Q1: How many variants are there in the credible (ρ=0.95) set? For each of these variants, which is the probability to be causal? 
 root@e308405d0d6d:/home/eqtl/eQTL# wc -l result/ENSG00000198951.6_set
 3 result/ENSG00000198951.6_set
-#rs133335 --> 0.0830959
+#rs133335 
 root@e308405d0d6d:/home/eqtl/eQTL# awk '$1=="rs133335"' result/ENSG00000198951.6_post
 rs133335	0.0415479	0.0830959
-#rs133339 --> 0.877362
+#rs133339
 root@e308405d0d6d:/home/eqtl/eQTL# awk '$1=="rs133339"' result/ENSG00000198951.6_post
 rs133339	0.438681	0.877362
-#rs112466745 --> 0.999999
+#rs112466745 
 root@d6add0c3151e:/home/eqtl/eQTL# awk '$1=="rs112466745"' result/ENSG00000198951.6_post
 rs112466745	0.5	0.999999
 
@@ -464,22 +464,16 @@ root@5ebcf2ed1aac:/home/eqtl/eQTL# awk '{print $1, $12, $13}' <(awk '$8=="rs1124
 ENSG00000198951.6 2.08494e-07 -0.209815
 
 
-#How are they in comparison to the p-values and effect sizes of other variants tested for the same gene? The p-value of our varients are smaller and the effect size is bigger. 
+#How are they in comparison to the p-values and effect sizes of other variants tested for the same gene? 
+#The p-value of our varients are smaller and the effect size is bigger. 
 root@5ebcf2ed1aac:/home/eqtl/eQTL# awk '{print $1, $12, $13}' <(awk '$1=="ENSG00000198951.6"' result/nominals.txt)
 
 #Q3: Which consequences, according to the variant effect predictor, do these variants have?
 #intron_variant: 38% / non_coding_transcript_variant: 26% / NMD_transcript_variant: 17% / missense_variant: 11% / upstream_gene_variant: 4% / non_coding_transcript_exon_variant: 2% / 3_prime_UTR_variant: 2%
 #http://grch37.ensembl.org/Homo_sapiens/Tools/VEP/Results?db=core;tl=IyrEm821GXgh4IAk-4705162
 
-#Task 18: Generate a LocusZoom plot. Use as 'SNP' any of the colocalized or fine-mapped variants. Hint: You can generate the file that you should upload to LocusZoom as follows (remember the separator in the output file is , not \t):
+#Task 18: Generate a LocusZoom plot. Use as 'SNP' any of the colocalized or fine-mapped variants. 
 # Define the gene corresponding to the co-localized or fine-mapped variants of interest
 root@5ebcf2ed1aac:/home/eqtl/eQTL# gene=ENSG00000198951.6
 root@5ebcf2ed1aac:/home/eqtl/eQTL# cat <(echo "MarkerName P.value") <(grep $gene result/nominals.txt | cut -d " " -f8,12) > tmp/metal.$gene
 #plot: /home/eqtl/eQTL/result/plots/EUR.rs35696419.400kb.pdf
-
-#Task 19: Make an empty folder called eQTL_HandsOn in your home directory. Copy to it your run.sh script, and the result folder with its content. Add, commit and push these changes to a GitHub repository with the same name.
-
-
-
-
-
