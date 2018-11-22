@@ -345,10 +345,8 @@ root@db25c5edc1f2:/home/eqtl/eQTL# plot.enrich.R -i result/enrichments.txt -o re
 
 #Q2: How many eQTLs are high impact variants? Which consequences are related to those high impact variants? 
 root@d6add0c3151e:/home/eqtl/eQTL# wc -l MOCNDEmRPOJs68Io.IMPACT_is_HIGH\(1\).txt 
-24 MOCNDEmRPOJs68Io.IMPACT_is_HIGH(1).txt #24 variants
+24 MOCNDEmRPOJs68Io.IMPACT_is_HIGH(1).txt #23 variants i +1 linea de cabezera
 
-root@d6add0c3151e:/home/eqtl/eQTL# wc -l MOCNDEmRPOJs68Io.IMPACT_is_HIGH\(1\).txt 
-24 MOCNDEmRPOJs68Io.IMPACT_is_HIGH(1).txt
 root@d6add0c3151e:/home/eqtl/eQTL# uniq <(cut -f4 MOCNDEmRPOJs68Io.IMPACT_is_HIGH\(1\).txt)
 Consequence
 splice_acceptor_variant,non_coding_transcript_variant
@@ -363,43 +361,26 @@ splice_acceptor_variant,non_coding_transcript_variant
 stop_gained
 
 #Q3: Out of all high impact variants, how many of them are falling in acceptor splice sites of protein coding genes? Hint: Use the command below to get the variants that you will upload to the VEP.
-root@d6add0c3151e:/home/eqtl/eQTL# wc -l <(awk '$4=="splice_acceptor_variant"' MOCNDEmRPOJs68Io.IMPACT_is_HIGH\(1\).txt )
-3 /dev/fd/63
+#6
 
-#Task 15: And what about eGenes? Perform a GO enrichment to learn more about their function.
-
-# Generate a list of sGenes
-root@aa0862d815df:/home/eqtl/eQTL# cut -f1 result/eqtls.tsv | sed '1d' | sed 's/\..\+//' | sort | uniq > tmp/egenes.txt
-
-# We will use as background all the genes (PC and lincRNA) in chr22
-root@aa0862d815df:/home/eqtl/eQTL# awk '{if($1==22) print $4}' tmp/gencode.annotation.bed | sed 's/\..\+//' | sort | uniq > tmp/bg.txt
-
-#Use GOrilla to perform the enrichment. Select the options Two unranked lists of genes (target and background lists) and upload egenes.txt and bg.txt. Select ontology All and check Show output also in REVIGO. Q1: In which biological processes are your eGenes enriched? Response to stimulus: response to molecule of bacterial origin and response to lipopolysaccharide.
-#Which molecular functions and components correspond to those processes? The function is Ras guanyl-nucleotide exchange factor activity and the component is endoplasmic reticulum. 
+#Task 15: And what about eGenes? Perform a GO enrichment to learn more about their function. 
+#Q1: In which biological processes are your eGenes enriched? 
+#Response to stimulus: response to molecule of bacterial origin and response to lipopolysaccharide.
+#Which molecular functions and components correspond to those processes? 
+#The function is Ras guanyl-nucleotide exchange factor activity and the component is endoplasmic reticulum. 
 
 #In input/unprocessed/gwas you will find the file gwas.catalog.hg19.bed, which contains a parsed version of the GWAS Catalog. We will use the Regulatory Trait Concordance (RTC) method to co-localize our eQTLs with the GWAS variants in the Catalog.
 
 #Task 16: Perform a co-localization analysis.
 
-# Generate input files for QTLtools rtc
-root@aa0862d815df:/home/eqtl/eQTL# grep -Fwf <(cut -f1 result/eqtls.tsv ) result/permutations.txt > tmp/rtc_input
-root@aa0862d815df:/home/eqtl/eQTL# cut -f4,7 input/unprocessed/gwas/gwas.catalog.hg19.bed > tmp/gwas_trait
-
-# Download the file 'hotspots_b37_hg19.bed' from QTLtools website
-root@aa0862d815df:/home/eqtl/eQTL# wget http://jungle.unige.ch/QTLtools_examples/hotspots_b37_hg19.bed --directory-prefix tmp
-
-# Remove 'chr' from chromosome names (-i option to modify the file 'in place')
-root@aa0862d815df:/home/eqtl/eQTL# sed -i 's/^chr//' tmp/hotspots_b37_hg19.bed
-
-# Run RTC
-root@aa0862d815df:/home/eqtl/eQTL# QTLtools rtc --vcf input/processed/genotypes.chr22.vcf.gz --bed input/processed/genes.chr22.norm.bed.gz --cov input/processed/covariates.tsv.gz --hotspot tmp/hotspots_b37_hg19.bed --gwas-cis tmp/gwas_trait tmp/rtc_input --out result/rtc.txt
-
-#Explore the output file. Review QTLtools documentation to know which information contains each column. Q1: How many pairs of variants have a RTC value above 0.9? 
+#Q1: How many pairs of variants have a RTC value above 0.9? 
 root@aa0862d815df:/home/eqtl/eQTL# wc -l <(awk '$20 > "0.9"' result/rtc.txt)
 39 /dev/fd/63
 #39 pairs
 
-#Q2: For each pair, we have a GWAS hit and an eQTL. Find one example so that the gene to which the eQTL is associated is relevant for the trait/disease to which the GWAS variant is associated. Explore the literature and the biological databases that you know to gather more information. 
+#Q2: For each pair, we have a GWAS hit and an eQTL. 
+#Find one example so that the gene to which the eQTL is associated is relevant for the trait/disease to which the GWAS variant is associated. 
+#Explore the literature and the biological databases that you know to gather more information. 
 #Como más cerca esté de 1 el RTS score, más relevante será. 
 root@50c24249d0ba:/home/eqtl/eQTL# awk '$20=="1"' result/rtc.txt
 rs909685 rs909685 ENSG00000100321.10 ENSG00000100321.10 22 39747671 0 22 39747671 0 22 39745930 0 1741 65647 65647 39660501 39757500 243 1 1 1
